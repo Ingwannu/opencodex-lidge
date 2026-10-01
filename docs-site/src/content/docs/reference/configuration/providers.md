@@ -875,6 +875,13 @@ rotation may trigger provider restrictions.
 | `anthropicAccountPool.stickyLimit?` | `number` | `1` | Successful new-session binds retained on one round-robin selection. Range 1–100. |
 | `anthropicAccountPool.routes?` | `{name, match, accounts, fallback?}[]` | — | Ordered model routes for the enabled Anthropic OAuth pool. `match` is a full, case-sensitive model ID glob (`*` and `?`); first match wins. `accounts` contains stored account IDs, not aliases. Eligible accounts are limited to the route for initial selection and 429 retry. Without fallback, an empty route returns a local 401, or 429 with route-scoped `Retry-After` if all its declared accounts are cooling. With `fallback: true`, an all-cooling ordinary pool returns 429 with its earliest usable cooldown, even if a saved route account was removed; the client response never names the route; the proxy log uses `route:#<n>` for the rule’s 1-based position. `fallback: true` widens only when no routed account is eligible; fill-first then uses ordinary pool order. No matching rule retains normal selection; disabling the pool makes saved routes inactive. Invalid rules fail validated writes and prevent routed dispatch until corrected. `null` clears routes through the settings API. |
 
+Anthropic OAuth vision and web-search helpers match these routes using each helper's own model,
+independently of the main request model. Each helper authenticates with its routed account, which
+can differ from the globally active account. If a strict helper route has no eligible account, the
+helper fails locally before any provider request; it does not silently use an account outside the
+route. When the main request works but image description or web search fails, check the helper's
+configured model and the accounts eligible for that model's route.
+
 When enabled, 429 records a cooldown and may rotate within the request. The cooldown length comes
 from a usable `Retry-After`, otherwise from the latest valid reset time among rate-limit windows
 Anthropic reports as `rejected`, including weekly windows. Valid upstream deadlines are not
