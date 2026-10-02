@@ -149,6 +149,10 @@ current port holder and retry the restart after the conflict is resolved.
 Idempotently ensure a background proxy is running, then sync its live model catalog. If
 `codexAutoStart` is `false`, it prints that autostart is disabled and does nothing.
 
+With a validated connected-client configuration, `ensure` succeeds without starting a local
+provider proxy after reconciling the client journal. This does not probe or certify the remote
+hub's availability. Invalid or mismatched client state still fails.
+
 ### `ocx restore [back]` · `ocx eject [back]`
 
 Restore native Codex **without** stopping the proxy — strips the injected config lines and routed

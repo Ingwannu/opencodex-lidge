@@ -351,7 +351,8 @@ const commandRunners: Record<string, CommandRunner> = {
       console.error(clientState.kind === "connected"
         ? "Client mode does not start a local provider proxy; use 'ocx sync'."
         : `Client state is ${clientState.kind}: ${clientState.reason}`);
-      return 1;
+      // A validated client delegates inference to its hub; no local startup is needed.
+      return clientState.kind === "connected" ? 0 : 1;
     }
     await deps.handleEnsure();
     return Number(process.exitCode ?? 0);
