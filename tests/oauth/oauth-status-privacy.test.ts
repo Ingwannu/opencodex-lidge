@@ -81,7 +81,8 @@ describe("OAuth status privacy", () => {
     loginState.set("pending-xai", { provider: "xai", flowId: "pending-xai", done: false });
     expect(cancelLoginFlow("anthropic", "failed-xai")).toBe(false);
     expect(loginState.has("failed-xai")).toBe(true);
-    expect(cancelLoginFlow("xai", "failed-xai")).toBe(true);
+    expect(cancelLoginFlow("xai", "failed-xai")).toBe(false);
+    expect(cancelLoginFlow("xai", "failed-xai", { dismissSettledFailure: true })).toBe(true);
     expect(loginState.get("pending-xai")?.done).toBe(false);
     expect(getLoginStatus("xai").status).toBe("pending");
   });

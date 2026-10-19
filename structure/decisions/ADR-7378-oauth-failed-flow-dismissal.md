@@ -7,7 +7,8 @@
   reuse the explicit cancellation endpoint. Hiding errors would conceal a real failed add-account
   attempt; a timer could erase an outcome before a polling caller reads it.
 - Decision: extend the existing cancellation owner to drop exactly one settled failed flow with
-  no live controller. Reuse paste cleanup and waiter-safe flow removal, without credential I/O.
+  no live controller, only when the public endpoint explicitly opts in. Internal callers retain
+  the boolean meaning of live cancellation. Reuse paste cleanup and waiter-safe flow removal, without credential I/O.
 - Consequences: failures remain observable until explicitly dismissed; successful outcomes and
   pending-cancellation results keep their contract. Repeated dismissal is a no-op. This provides
   API recovery without an implicit login, logout, credential refresh or service restart.
