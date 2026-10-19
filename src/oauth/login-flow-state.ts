@@ -297,7 +297,8 @@ export function clearLoginState(provider: string): void {
 /**
  * Cancel one login. `flowId` names it exactly; without one the provider's newest in-flight flow
  * is cancelled, which is every single-flow caller (GUI, CLI) unchanged. A flow id belonging to a
- * different provider is refused rather than cancelled.
+ * different provider is refused rather than cancelled. A settled failure can be dismissed
+ * explicitly; credential health and the result of a successful flow remain independent.
  */
 export function cancelLoginFlow(provider: string, flowId?: string): boolean {
   const flowKey = flowId ?? latestLoginFlowKey(provider);
@@ -305,6 +306,13 @@ export function cancelLoginFlow(provider: string, flowId?: string): boolean {
   const active = loginAbort.get(flowKey);
   const existing = loginState.get(flowKey);
   if ((active?.provider ?? loginFlowProvider(flowKey)) !== provider) return false;
+  if (!active && existing?.done && existing.error) {
+    // A failed add-account attempt does not invalidate a previously signed-in account. Let
+    // its owner dismiss the stale UI outcome without erasing credentials or another flow.
+    clearManualCodeSlot(flowKey);
+    dropLoginFlow(flowKey);
+    return true;
+  }
   if (!active && (!existing || existing.done)) return false;
   abandonLoginFlow(flowKey, { error: "Login cancelled", errorCode: "no_pending_login" });
   return true;
