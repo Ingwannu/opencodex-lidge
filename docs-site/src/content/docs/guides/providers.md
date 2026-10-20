@@ -42,6 +42,8 @@ For adding an account with exhausted quota and finishing its deferred validation
 
 ### Providers overview pool capacity
 
+Business Premium seats reported as `self_serve_business_prolite` count as five Standard-seat units in this estimate. This display weight does not select accounts or create a five-hour window when the upstream reports only weekly usage. The calibration follows the [official Business usage limits](https://help.openai.com/en/articles/12003714-chatgpt-business-models-and-limits), checked 2026-10-20; unknown plans continue to count at the baseline with incomplete coverage disclosed.
+
 For Codex login in Pool mode, the Providers overview shows a configured-weight estimate of the
 pool's used capacity rather than presenting one arbitrary account as the provider total. The same
 row also shows the current effective account's raw quota percentage, so you can distinguish the
